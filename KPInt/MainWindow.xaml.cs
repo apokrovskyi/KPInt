@@ -16,32 +16,38 @@ namespace KPInt
         {
             InitializeComponent();
 
-            int approx_fps = 25;
+            var control = new Controls.Canvas.CanvasControlVM();
+            control.DrawLine(new NewColorLine(new Point(0, 0), new Point(100, 100), System.Windows.Media.Colors.Black, 2));
 
-            var connectionControl = new ServerConnectionControl();
-            var colorSelector = new ColorSelectionControl();
-            var visibilitySwitch = new VisibilitySwitchControl(true, connectionControl, colorSelector);
-            var canvasControl = new CanvasControl(approx_fps);
+            WPFContent.Content = control.View;
 
-            var runFlag = new LockedValue<bool>(true);
-            var client = new RoomClient(runFlag, approx_fps);
-            Task.Run(client.Receive);
+            //int approx_fps = 25;
 
-            _connection = new ServerConnectionVM(new ConnectionManager(client), connectionControl, canvasControl);
+            //var connectionControl = new ServerConnectionControl();
+            //var colorSelector = new ColorSelectionControl();
+            //var visibilitySwitch = new VisibilitySwitchControl(true, connectionControl, colorSelector);
+            //var canvasControl = new CanvasControl(approx_fps);
 
-            Closed += (s, e) => runFlag.SetValue(false);
-            canvasControl.LineChanged += (s, e) => client.Line =
-                new ColorLine(canvasControl.StartPoint, canvasControl.EndPoint, colorSelector.SelectedColor, colorSelector.Thickness);
-            _connection.RoomChanged += (s, e) => canvasControl.Clear();
-            client.LineReceived += (s, e) => Dispatcher.Invoke(() => canvasControl.DrawLine(client.ReceivedLine.Retrieve(x => x)));
+            //var runFlag = new LockedValue<bool>(true);
+            //var client = new RoomClient(runFlag, approx_fps);
+            //Task.Run(client.Receive);
 
-            colorSelector.SaveButton.Click += (s, e) => canvasControl.Save();
+            //_connection = new ServerConnectionVM(new ConnectionManager(client), connectionControl, canvasControl);
+
+            //Closed += (s, e) => runFlag.SetValue(false);
+            //canvasControl.LineChanged += (s, e) => client.Line =
+            //    new ColorLine(canvasControl.StartPoint, canvasControl.EndPoint, colorSelector.SelectedColor, colorSelector.Thickness);
+            //_connection.RoomChanged += (s, e) => canvasControl.Clear();
+            //client.LineReceived += (s, e) => Dispatcher.Invoke(() => canvasControl.DrawLine(client.ReceivedLine.Retrieve(x => x)));
+
+            //colorSelector.SaveButton.Click += (s, e) => canvasControl.Save();
 
 
-            WPFContent.Content = canvasControl;
-            ConnectionControls.Content = connectionControl;
-            VisibilitySwitch.Content = visibilitySwitch;
-            ColorSelector.Content = colorSelector;
+            //WPFContent.Content = canvasControl;
+            //ConnectionControls.Content = connectionControl;
+            //VisibilitySwitch.Content = visibilitySwitch;
+            //ColorSelector.Content = colorSelector;
+
         }
     }
 }

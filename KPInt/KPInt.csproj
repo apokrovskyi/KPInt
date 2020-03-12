@@ -18,4 +18,16 @@
     <Resource Include="Resources\Refresh.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Controls\Canvas\CanvasControlView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Controls\Canvas\CanvasControlView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>
