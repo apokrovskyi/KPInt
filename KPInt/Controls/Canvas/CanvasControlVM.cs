@@ -9,52 +9,56 @@ namespace KPInt.Controls.Canvas
     {
         private class VisualWrap : UIElement
         {
-            public Visual Visual { get; set; }
+            private readonly Visual _content;
             protected override int VisualChildrenCount => 1;
-            protected override Visual GetVisualChild(int index) => Visual;
+            protected override Visual GetVisualChild(int index) => _content;
+
+            public VisualWrap(Visual visual) => _content = visual;
         }
 
         private const int DPI = 96;
 
-        private readonly CanvasControlView _control;
-
-        private readonly DrawingVisual _canvas;
-        private readonly DrawingContext _renderer;
-        private readonly Pen _pen;
-        private readonly SolidColorBrush _brush;
-
         public FrameworkElement View => _control;
+
+        private readonly CanvasControlView _control;
+        private readonly ContainerVisual _container;
+
         public BitmapImage Picture
         {
             get
             {
                 var bm = new BitmapImage();
                 var rt = new RenderTargetBitmap((int)_control.ActualWidth, (int)_control.ActualHeight, DPI, DPI, PixelFormats.Pbgra32);
-                rt.Render(_canvas);
+                rt.Render(_container);
                 return bm;
             }
         }
 
         public CanvasControlVM()
         {
-            _canvas = new DrawingVisual();
-            _renderer = _canvas.RenderOpen();
-            _pen = new Pen { Brush = _brush = new SolidColorBrush(), StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
-
+            _container = new ContainerVisual();
             _control = new CanvasControlView();
-            _control.BaseCanvas.Children.Add(new VisualWrap { Visual = _canvas });
+            _control.BaseCanvas.Children.Add(new VisualWrap(_container));
         }
 
         public void DrawLine(NewColorLine line)
         {
-            _pen.Thickness = line.Thickness;
-            _brush.Color = line.Color;
-            _renderer.DrawLine(_pen, line.Start, line.End);
+            var target = new DrawingVisual();
+            using (var renderer = target.RenderOpen())
+            {
+                var pen = new Pen(new SolidColorBrush(line.Color), line.Thickness)
+                {
+                    StartLineCap = PenLineCap.Round,
+                    EndLineCap = PenLineCap.Round
+                };
+                renderer.DrawLine(pen, line.Start, line.End);
+            }
+            _container.Children.Add(target);
         }
 
         public void Clear()
         {
-            _renderer.DrawRectangle(new SolidColorBrush(Colors.White), null, new Rect(0, 0, _control.ActualWidth, _control.ActualHeight));
+            _container.Children.Clear();
         }
     }
 }
