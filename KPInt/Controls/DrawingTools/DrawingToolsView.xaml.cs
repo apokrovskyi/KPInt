@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace KPInt.Controls.ValueInput
+namespace KPInt.Controls.DrawingTools
 {
     /// <summary>
-    /// Логика взаимодействия для ValueInput.xaml
+    /// Логика взаимодействия для DrawingToolsView.xaml
     /// </summary>
-    public partial class ValueInput : UserControl
+    public partial class DrawingToolsView : UserControl
     {
-        public ValueInput()
+        public DrawingToolsView()
         {
             InitializeComponent();
         }

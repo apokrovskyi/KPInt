@@ -1,0 +1,21 @@
+﻿<Window x:Class="KPInt.Controls.DrawingTools.ToolsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KPInt.Controls.DrawingTools"
+        mc:Ignorable="d"
+        Title="Tools" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+    <StackPanel Orientation="Vertical" Margin="10 10 10 10">
+        <StackPanel Orientation="Horizontal"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Grid x:Name="PrimaryColorRect" Width="50" Height="50" Margin="10 10 0 10"/>
+            <Grid x:Name="SecondaryColorRect" Width="10" Height="10" Margin="10 0 10 15" VerticalAlignment="Bottom"/>
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                <ContentControl x:Name="RColorPlaceholder" VerticalAlignment="Center" IsTabStop="False"/>
+                <ContentControl x:Name="GColorPlaceholder" VerticalAlignment="Center" IsTabStop="False" Margin="0 5 0 5"/>
+                <ContentControl x:Name="BColorPlaceholder" VerticalAlignment="Center" IsTabStop="False"/>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</Window>
