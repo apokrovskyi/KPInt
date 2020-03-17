@@ -9,24 +9,25 @@ namespace KPInt_Server
 
         public User ConnectedUser { get; }
 
-        private readonly ProtocolTcpClient _client;
-
-        private DateTime _lastInteraction;
-
         public string Address => _client.Address;
 
         public bool Connected => _client.Connected;
 
-        private void Shake()
+        private readonly ProtocolTcpClient _client;
+        private DateTime _lastInteraction;
+
+        public UserTcpConnection(string name, ProtocolTcpClient client)
         {
-            _lastInteraction = DateTime.Now;
+            ConnectedUser = new User(name);
+            _client = client;
+            Shake();
         }
 
         public Message Recv()
         {
             var msg = _client.RecvMessage();
 
-            if (msg.UnDefined)
+            if (msg == null)
             {
                 if ((DateTime.Now - _lastInteraction).TotalMilliseconds > TIMEOUT)
                     Send(new Message { Code = MessageCode.PING });
@@ -37,33 +38,16 @@ namespace KPInt_Server
             return msg;
         }
 
-        public bool Send(Message message)
+        public void Send(Message message)
         {
-            if (!Connected) return false;
+            if (!Connected) return;
 
-            if (_client.SendMessage(message))
-            {
-                Shake();
-                return true;
-            }
-            else
-            {
-                Close();
-                return false;
-            }
+            _client.SendMessage(message);
+
+            if (Connected) Shake();
+            else ConnectedUser.Id = -1;
         }
 
-        public void Close()
-        {
-            _client.Close();
-            ConnectedUser.Id = -1;
-        }
-
-        public UserTcpConnection(string name, ProtocolTcpClient client)
-        {
-            ConnectedUser = new User(name);
-            _client = client;
-            Shake();
-        }
+        private void Shake() => _lastInteraction = DateTime.Now;
     }
 }

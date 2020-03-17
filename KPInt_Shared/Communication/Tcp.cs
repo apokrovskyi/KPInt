@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.ComponentModel;
 
 namespace KPInt_Shared.Communication
 {
     public enum MessageCode
     {
-        UNDEFINED,
         CONNECT,
         GET_ROOMS,
         ADD_ROOM,
@@ -30,21 +30,32 @@ namespace KPInt_Shared.Communication
             return w.Array;
         }
 
-        public bool UnDefined => Length == 0 && Code == MessageCode.UNDEFINED;
         public Int32 Length => Body?.Length ?? 0;
-        public MessageCode Code = MessageCode.UNDEFINED;
+        public MessageCode Code = MessageCode.PING;
         public byte[] Body = null;
     }
 
     public class ProtocolTcpClient
     {
-        public int Timeout { get; set; } = 5; //seconds
+        public event PropertyChangedEventHandler IsConnectedChanged;
 
         private TcpClient _tcpClient = null;
 
         public string Address { get; private set; } = "";
 
-        public bool Connected { get; private set; } = false;
+        public bool Connected
+        {
+            get => _connected;
+            private set
+            {
+                if (_connected == value) return;
+
+                _connected = value;
+                IsConnectedChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Connected)));
+            }
+        }
+
+        private bool _connected;
 
         public bool Connect(IPAddress address)
         {
@@ -60,9 +71,7 @@ namespace KPInt_Shared.Communication
             return Connected;
         }
 
-        /// <summary>
-        /// Configures the Client with the context
-        /// </summary>
+        /// <summary> Configures the Client with the context. </summary>
         /// <param name="client">It has to be opened and connected to work properly</param>
         public void Configure(TcpClient client)
         {
@@ -83,32 +92,25 @@ namespace KPInt_Shared.Communication
             var buffer = new byte[8];
             ReadAll(buffer);
 
-            message.Code = (MessageCode)BitConverter.ToInt32(buffer, 0);
-            var len = BitConverter.ToInt32(buffer, 4);
-
-            message.Body = new byte[len];
+            var reader = new ByteArrayReader(buffer);
+            message.Code = (MessageCode)reader.ReadInt32();
+            message.Body = new byte[reader.ReadInt32()];
             ReadAll(message.Body);
-
-            //Console.WriteLine("[{0}] >> {1}", Address, string.Join(" ", message.GetBytes()));
 
             return message;
         }
 
-        public bool SendMessage(Message message)
+        public void SendMessage(Message message)
         {
             try
             {
-                WriteAll(message.GetBytes());
+                var bytes = message.GetBytes();
+                _tcpClient.GetStream().Write(bytes, 0, bytes.Length);
             }
             catch
             {
                 Close();
-                return false;
             }
-
-            //Console.WriteLine("[{0}] << {1}", Address, string.Join(" ", message.GetBytes()));
-
-            return true;
         }
 
         public void Close()
@@ -122,11 +124,6 @@ namespace KPInt_Shared.Communication
             int index = 0;
             while (index < buffer.Length)
                 index += _tcpClient.GetStream().Read(buffer, index, buffer.Length - index);
-        }
-
-        private void WriteAll(byte[] data)
-        {
-            _tcpClient.GetStream().Write(data, 0, data.Length);
         }
     }
 }

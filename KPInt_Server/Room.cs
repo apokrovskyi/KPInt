@@ -9,8 +9,6 @@ namespace KPInt_Server
     {
         private const int TIMEOUT = Protocol.REFRESH_DELAY / 10;
 
-        private readonly Random _idGenerator;
-
         public string Name { get; }
 
         public string Password { get; }
@@ -20,7 +18,6 @@ namespace KPInt_Server
 
         public Room(string name, string password)
         {
-            _idGenerator = new Random((name + password).GetHashCode());
             Name = name;
             Password = password;
             _clients = new Dictionary<int, UserUdpConnection>();
@@ -37,7 +34,7 @@ namespace KPInt_Server
                 client.EndPoint = message.EndPoint;
 
             foreach (var roommate in _clients.Values)
-                if (message.colorLine.Thickness <= 0 || roommate != client)
+                if (message.colorLine.Valid != (roommate == client))
                     roommate.Send(message, server);
 
             return true;
@@ -74,12 +71,7 @@ namespace KPInt_Server
             return (DateTime.Now - ExpirationTime.Value).TotalSeconds > TIMEOUT;
         }
 
-        public int AddUser(User user)
-        {
-            user.Id = _idGenerator.Next();
-            _clients.Add(user.Id, new UserUdpConnection(user));
-            return user.Id;
-        }
+        public void AddUser(User user)=> _clients.Add(user.Id, new UserUdpConnection(user));
 
         public string PublicName => (string.IsNullOrEmpty(Password) ? " |" : "x|") + Name;
     }

@@ -19,7 +19,15 @@ namespace KPInt_Server
             if (EndPoint == null) return;
 
             message.EndPoint = EndPoint;
-            client.SendMessage(message);
+
+            try
+            {
+                client.SendMessage(message);
+            }
+            catch
+            {
+                ConnectedUser.Id = -1;
+            }
         }
     }
 }

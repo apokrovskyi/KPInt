@@ -5,6 +5,8 @@ namespace KPInt_Shared
 {
     public class NewColorLine
     {
+        public static NewColorLine Empty => new NewColorLine(new LinePoint(), new LinePoint(), new LineColor(), 0);
+
         public bool Valid => Start.X != End.X || Start.Y != End.Y;
         public LinePoint Start { get; }
         public LinePoint End { get; }

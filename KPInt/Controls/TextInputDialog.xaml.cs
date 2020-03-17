@@ -8,13 +8,12 @@ namespace KPInt.Controls
     /// </summary>
     public partial class TextInputDialog : Window
     {
-        public TextInputDialog(string prompt)
+        public TextInputDialog()
         {
             InitializeComponent();
-            PromptTextBlock.Text = prompt;
-            ValueTextBox.KeyDown += (s, e) => { if (e.Key == Key.Enter) Close(); };
-            ValueTextBox.Focus();
+            PasswordTextBox.KeyDown += (s, e) => { if (e.Key == Key.Enter) Close(); };
             SubmitButton.Click += (s, e) => Close();
+            PasswordTextBox.Focus();
         }
     }
 }

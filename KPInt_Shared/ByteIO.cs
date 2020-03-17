@@ -2,7 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using LinePoint = System.Drawing.Point;
+using System.Windows;
+using System.Windows.Media;
 
 public class ByteArrayReader
 {
@@ -47,12 +48,12 @@ public class ByteArrayReader
         return res;
     }
 
-    public ColorLine ReadColorLine()
+    public NewColorLine ReadColorLine()
     {
-        return new ColorLine(
-            new LinePoint(ReadInt32(), ReadInt32()),
-            new LinePoint(ReadInt32(), ReadInt32()),
-            System.Windows.Media.Color.FromRgb(ReadByte(), ReadByte(), ReadByte()),
+        return new NewColorLine(
+            new Point(ReadInt32(), ReadInt32()),
+            new Point(ReadInt32(), ReadInt32()),
+            Color.FromRgb(ReadByte(), ReadByte(), ReadByte()),
             ReadByte());
     }
 }
@@ -89,15 +90,15 @@ public class ByteArrayWriter
         return this;
     }
 
-    public ByteArrayWriter Append(ColorLine colorLine)
+    public ByteArrayWriter Append(NewColorLine colorLine)
     {
-        Append(colorLine.Start.X);
-        Append(colorLine.Start.Y);
-        Append(colorLine.End.X);
-        Append(colorLine.End.Y);
-        Append(colorLine.LineColor.R);
-        Append(colorLine.LineColor.G);
-        Append(colorLine.LineColor.B);
+        Append((int)colorLine.Start.X);
+        Append((int)colorLine.Start.Y);
+        Append((int)colorLine.End.X);
+        Append((int)colorLine.End.Y);
+        Append(colorLine.Color.R);
+        Append(colorLine.Color.G);
+        Append(colorLine.Color.B);
         Append(colorLine.Thickness);
         return this;
     }

@@ -10,7 +10,7 @@ using RenderPen = System.Drawing.Pen;
 
 namespace KPInt.Controls.Canvas
 {
-    class CanvasControlVM : UIElement
+    class CanvasControlVM
     {
         public FrameworkElement View => _control;
 
@@ -44,6 +44,8 @@ namespace KPInt.Controls.Canvas
                 return bm;
             }
         }
+
+        public bool IsEnabled { set { _control.BaseCanvas.IsHitTestVisible = value; } }
 
         public void DrawLine(NewColorLine line)
         {

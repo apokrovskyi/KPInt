@@ -13,14 +13,12 @@ namespace KPInt.Controls.DrawingTools
     {
         private const int WHEEL_SPEED_FRACTION = 20;
 
-        public event PropertyChangedEventHandler LineDrawn;
+        public event Action LineDrawn;
 
         public FrameworkElement View => _control;
 
         private readonly DrawingToolsView _control = new DrawingToolsView();
         private ToolsWindow _window;
-
-        private readonly CanvasControlVM _canvas = new CanvasControlVM();
 
         public NewColorLine DrawnLine { get; private set; }
 
@@ -30,7 +28,7 @@ namespace KPInt.Controls.DrawingTools
         private readonly double _frameLength;
         private DateTime? _drawStartTime;
 
-        public DrawingToolsVM(Window parent, double fps)
+        public DrawingToolsVM(Window parent, CanvasControlVM canvasControl, double fps)
         {
             _frameLength = 1000 / fps;
             _thickness = 1;
@@ -39,7 +37,7 @@ namespace KPInt.Controls.DrawingTools
             InputPanel.PreviewMouseLeftButtonDown += Control_PreviewMouseLeftButtonDown;
             InputPanel.PreviewMouseWheel += Control_PreviewMouseWheel;
 
-            _control.DrawingPanel.Children.Add(_canvas.View);
+            _control.DrawingPanel.Children.Add(canvasControl.View);
         }
 
         private void StartDrawing(Point start)
@@ -56,8 +54,7 @@ namespace KPInt.Controls.DrawingTools
         private void ChangeLine(Point end)
         {
             DrawnLine = new NewColorLine(DrawnLine.End, end, _window.DrawingColor, (byte)_thickness);
-            _canvas.DrawLine(DrawnLine);
-            LineDrawn?.Invoke(this, new PropertyChangedEventArgs(nameof(DrawnLine)));
+            LineDrawn?.Invoke();
         }
 
         private void StopDrawing()
