@@ -45,11 +45,9 @@ namespace KPInt.Controls.Canvas
             }
         }
 
-        public bool IsEnabled { set { _control.BaseCanvas.IsHitTestVisible = value; } }
-
-        public void DrawLine(NewColorLine line)
+        public void DrawLine(ColorLine line)
         {
-            if (line.Thickness <= 0) return;
+            if (line.Thickness == 0) return;
 
             _control.BaseCanvas.Children.Add(new Line
             {

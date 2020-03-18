@@ -1,7 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Sockets;
-using KPInt_Shared.Communication;
-using System;
 
 namespace KPInt_Shared.Communication
 {
@@ -17,19 +16,17 @@ namespace KPInt_Shared.Communication
 
         public IPEndPoint EndPoint = new IPEndPoint(0, 0);
         public int UserId = -1;
-        public NewColorLine colorLine = null;
+        public ColorLine colorLine = null;
     }
 
     public class ProtocolUdpClient
     {
-        private const int READ_TIMEOUT = Protocol.REFRESH_DELAY * 10;
-
         private readonly UdpClient _client;
 
         public ProtocolUdpClient(UdpClient client)
         {
             _client = client;
-            _client.Client.ReceiveTimeout = READ_TIMEOUT;
+            _client.Client.ReceiveTimeout = Protocol.REFRESH_DELAY * 10;
         }
 
         public UdpMessage RecvMessage()
@@ -51,7 +48,7 @@ namespace KPInt_Shared.Communication
             return res;
         }
 
-        public void BeginRecv(Action<UdpMessage> callback)
+        public void StartReceiver(LockedValue<bool> alive, Action<UdpMessage> callback)
         {
             _client.BeginReceive(x =>
             {
@@ -71,7 +68,9 @@ namespace KPInt_Shared.Communication
                 ReadMsg(res, msg);
 
                 callback(res);
-            }, new object());
+                if (alive.Retrieve(y => y))
+                    StartReceiver(alive, callback);
+            }, _client);
         }
 
         public void SendMessage(UdpMessage message)

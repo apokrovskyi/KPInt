@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows;
 
@@ -63,7 +59,7 @@ namespace KPInt.Controls.ValueSelector
 
         private void ValueSlider_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            var value = Math.Max(Value + e.Delta/5, _control.ValueSlider.Minimum);
+            var value = Math.Max(Value + e.Delta / 5, _control.ValueSlider.Minimum);
             Value = Math.Min(value, _control.ValueSlider.Maximum);
         }
 

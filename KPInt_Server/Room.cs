@@ -30,8 +30,7 @@ namespace KPInt_Server
 
             var client = _clients[message.UserId];
 
-            if (client.EndPoint == null)
-                client.EndPoint = message.EndPoint;
+            client.EndPoint = message.EndPoint;
 
             foreach (var roommate in _clients.Values)
                 if (message.colorLine.Valid != (roommate == client))
@@ -71,7 +70,7 @@ namespace KPInt_Server
             return (DateTime.Now - ExpirationTime.Value).TotalSeconds > TIMEOUT;
         }
 
-        public void AddUser(User user)=> _clients.Add(user.Id, new UserUdpConnection(user));
+        public void AddUser(User user) => _clients.Add(user.Id, new UserUdpConnection(user));
 
         public string PublicName => (string.IsNullOrEmpty(Password) ? " |" : "x|") + Name;
     }

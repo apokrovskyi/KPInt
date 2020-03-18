@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.ComponentModel;
-using KPInt.Controls.Canvas;
+﻿using KPInt.Controls.Canvas;
+using KPInt.Models.Tools;
 using KPInt_Shared;
-using System.Windows.Input;
+using System;
+using System.ComponentModel;
+using System.Windows;
 
 namespace KPInt.Controls.DrawingTools
 {
     class DrawingToolsVM
     {
-        private const int WHEEL_SPEED_FRACTION = 20;
-
         public event Action LineDrawn;
 
         public FrameworkElement View => _control;
@@ -20,94 +16,29 @@ namespace KPInt.Controls.DrawingTools
         private readonly DrawingToolsView _control = new DrawingToolsView();
         private ToolsWindow _window;
 
-        public NewColorLine DrawnLine { get; private set; }
-
-        private double _thickness;
-
-        private UIElement InputPanel => _control.DrawingPanel;
-        private readonly double _frameLength;
-        private DateTime? _drawStartTime;
+        public ColorLine DrawnLine { get; private set; }
 
         public DrawingToolsVM(Window parent, CanvasControlVM canvasControl, double fps)
         {
-            _frameLength = 1000 / fps;
-            _thickness = 1;
-
-            _control.Loaded += (s, e) => Control_Loaded(parent);
-            InputPanel.PreviewMouseLeftButtonDown += Control_PreviewMouseLeftButtonDown;
-            InputPanel.PreviewMouseWheel += Control_PreviewMouseWheel;
+            var pencilTool = new PencilTool(_control.DrawingPanel, (x) => _window.GetDrawingColor(x), ChangeLine, fps);
+            var lineTool = new LineTool(_control.DrawingPanel, (x) => _window.GetDrawingColor(x), () => pencilTool.Thickness, ChangeLine);
+            var pickerTool = new PickerTool(_control.DrawingPanel, canvasControl.View, (x, y) => _window.SetDrawingColor(x, y));
 
             _control.DrawingPanel.Children.Add(canvasControl.View);
+            _control.Loaded += (s, e) => Control_Loaded(pencilTool, lineTool, pickerTool, parent);
         }
 
-        private void StartDrawing(Point start)
+        private void ChangeLine(ColorLine line)
         {
-            InputPanel.PreviewMouseLeftButtonUp += Control_PreviewMouseLeftButtonUp;
-            InputPanel.PreviewMouseMove += Control_PreviewMouseMove;
-            InputPanel.MouseEnter += Control_MouseEnter;
-            InputPanel.MouseLeave += InputPanel_MouseLeave;
-
-            DrawnLine = new NewColorLine(start, start, _window.DrawingColor, 0);
-            _drawStartTime = DateTime.Now;
-        }
-
-        private void ChangeLine(Point end)
-        {
-            DrawnLine = new NewColorLine(DrawnLine.End, end, _window.DrawingColor, (byte)_thickness);
+            DrawnLine = line;
             LineDrawn?.Invoke();
         }
 
-        private void StopDrawing()
+        private void Control_Loaded(IDrawingTool pencil, IDrawingTool line, IDrawingTool picker, Window parent)
         {
-            _drawStartTime = null;
-
-            InputPanel.PreviewMouseLeftButtonUp -= Control_PreviewMouseLeftButtonUp;
-            InputPanel.PreviewMouseMove -= Control_PreviewMouseMove;
-            InputPanel.MouseEnter -= Control_MouseEnter;
-            InputPanel.MouseLeave -= InputPanel_MouseLeave;
-        }
-
-        private void Control_Loaded(Window parent)
-        {
-            _window = new ToolsWindow { Owner = parent };
+            _window = new ToolsWindow(pencil, line, picker) { Owner = parent };
             _window.Closing += ToolWindow_Closing;
             _window.Show();
-        }
-
-        private void Control_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            var value = Math.Max(1, _thickness + e.Delta / WHEEL_SPEED_FRACTION);
-            _thickness = Math.Min(value, byte.MaxValue);
-        }
-
-        private void Control_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            StartDrawing(e.GetPosition(InputPanel));
-        }
-
-        private void Control_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            ChangeLine(e.GetPosition(InputPanel));
-            StopDrawing();
-        }
-
-        private void Control_MouseEnter(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                StopDrawing();
-                StartDrawing(e.GetPosition(InputPanel));
-            }
-        }
-
-        private void InputPanel_MouseLeave(object sender, MouseEventArgs e) =>
-            ChangeLine(e.GetPosition(InputPanel));
-
-        private void Control_PreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            if ((DateTime.Now - _drawStartTime.Value).TotalMilliseconds < _frameLength) return;
-            ChangeLine(e.GetPosition(InputPanel));
-            _drawStartTime = DateTime.Now;
         }
 
         public void OpenToolWindow() =>

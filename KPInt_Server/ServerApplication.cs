@@ -151,26 +151,27 @@ namespace KPInt_Server
 
         public void Broadcast()
         {
-            try { 
-            var server = new ProtocolUdpClient(new UdpClient(Protocol.UDP_PORT));
-
-            while (_flag.Retrieve((x) => x))
+            try
             {
-                var msg = server.RecvMessage();
+                var server = new ProtocolUdpClient(new UdpClient(Protocol.UDP_PORT));
 
-                _rooms.Act(x =>
+                while (_flag.Retrieve((x) => x))
                 {
-                    foreach (var room in x.Values.ToList())
+                    var msg = server.RecvMessage();
+
+                    _rooms.Act(x =>
                     {
-                        if (msg != null && room.Consume(msg, server))
-                            msg = null;
-                        else if (room.CheckExpired())
+                        foreach (var room in x.Values.ToList())
                         {
-                            Console.WriteLine("Room {0} timed out, removing", room.Name);
-                            x.Remove(room.PublicName);
+                            if (msg != null && room.Consume(msg, server))
+                                msg = null;
+                            else if (room.CheckExpired())
+                            {
+                                Console.WriteLine("Room {0} timed out, removing", room.Name);
+                                x.Remove(room.PublicName);
+                            }
                         }
-                    }
-                });
+                    });
                 }
             }
             catch (Exception e)

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using KPInt.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows;
 using System.Net;
-using KPInt.Models;
-using KPInt.Controls.DrawingTools;
-using KPInt.Controls.Canvas;
+using System.Windows;
 
 
 namespace KPInt.Controls.ServerConnection
@@ -31,11 +25,11 @@ namespace KPInt.Controls.ServerConnection
 
         private readonly ServerConnectionView _control;
 
-        public ServerConnectionVM()
+        public ServerConnectionVM(TcpServerConnection connection)
         {
             Rooms = new ObservableCollection<string>();
 
-            _tcpConnection = new TcpServerConnection();
+            _tcpConnection = connection;
             _tcpConnection.IsConnectedChanged += TcpConnection_OnConnectedChanged;
 
             _control = new ServerConnectionView { DataContext = this };
@@ -61,7 +55,7 @@ namespace KPInt.Controls.ServerConnection
                 _control.StatusTextBox.Text = "Failed";
         }
 
-        private void ConnectToRoomButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void ConnectToRoomButton_Click(object sender, RoutedEventArgs e)
         {
             if (_control.RoomSelector.SelectedIndex < 0) return;
 

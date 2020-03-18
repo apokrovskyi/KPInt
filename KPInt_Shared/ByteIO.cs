@@ -48,9 +48,9 @@ public class ByteArrayReader
         return res;
     }
 
-    public NewColorLine ReadColorLine()
+    public ColorLine ReadColorLine()
     {
-        return new NewColorLine(
+        return new ColorLine(
             new Point(ReadInt32(), ReadInt32()),
             new Point(ReadInt32(), ReadInt32()),
             Color.FromRgb(ReadByte(), ReadByte(), ReadByte()),
@@ -90,7 +90,7 @@ public class ByteArrayWriter
         return this;
     }
 
-    public ByteArrayWriter Append(NewColorLine colorLine)
+    public ByteArrayWriter Append(ColorLine colorLine)
     {
         Append((int)colorLine.Start.X);
         Append((int)colorLine.Start.Y);

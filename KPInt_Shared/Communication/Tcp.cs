@@ -1,7 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
-using System.ComponentModel;
 
 namespace KPInt_Shared.Communication
 {
@@ -83,18 +83,18 @@ namespace KPInt_Shared.Communication
 
         public Message RecvMessage()
         {
-            var message = new Message();
-            if (!Connected)
-                return message;
-
-            if (_tcpClient.Available == 0) return message;
+            if (!Connected || _tcpClient.Available == 0)
+                return null;
 
             var buffer = new byte[8];
             ReadAll(buffer);
 
             var reader = new ByteArrayReader(buffer);
-            message.Code = (MessageCode)reader.ReadInt32();
-            message.Body = new byte[reader.ReadInt32()];
+            var message = new Message
+            {
+                Code = (MessageCode)reader.ReadInt32(),
+                Body = new byte[reader.ReadInt32()]
+            };
             ReadAll(message.Body);
 
             return message;

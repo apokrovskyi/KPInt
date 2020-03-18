@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using KPInt_Shared;
+﻿using KPInt_Shared;
 using KPInt_Shared.Communication;
+using System;
 using System.Net;
 using System.Net.Sockets;
 
@@ -13,40 +8,41 @@ namespace KPInt.Models
 {
     class UdpServerConnection
     {
-        public event PropertyChangedEventHandler LineReceived;
+        public event Action LineReceived;
+        public event Action Disconnected;
 
-        public LockedValue<NewColorLine> ReceivedLine { get; }
+        public LockedValue<ColorLine> ReceivedLine { get; }
 
         public IPAddress Address { set => _configuration.EndPoint.Address = value; }
 
-        private readonly LockedValue<bool> _running;
         private readonly LockedValue<ProtocolUdpClient> _client;
         private readonly UdpMessage _configuration;
 
+        private LockedValue<bool> _token;
+
         public UdpServerConnection()
         {
-            _client = new LockedValue<ProtocolUdpClient>(new ProtocolUdpClient(new UdpClient()));
-            _running = new LockedValue<bool>(false);
+            _client = new LockedValue<ProtocolUdpClient>(null);
             _configuration = new UdpMessage();
             _configuration.EndPoint.Port = Protocol.UDP_PORT;
 
-            ReceivedLine = new LockedValue<NewColorLine>(null);
+            ReceivedLine = new LockedValue<ColorLine>(null);
         }
 
-        public void SendLine(NewColorLine colorLine)
+        public void SendLine(ColorLine colorLine)
         {
-            if (!_running.Retrieve(x => x)) return;
-
+            if (_configuration.EndPoint.Address == null || _configuration.UserId < 0) return;
             _configuration.colorLine = colorLine;
-            _client.Act(x => x.SendMessage(_configuration));
+            _client.Act(x => x?.SendMessage(_configuration));
         }
 
         public void Start(int ID)
         {
             Stop();
+            _client.SetValue(new ProtocolUdpClient(new UdpClient()));
             _configuration.UserId = ID;
 
-            var line = NewColorLine.Empty;
+            var line = ColorLine.Empty;
 
             while (true)
             {
@@ -54,22 +50,29 @@ namespace KPInt.Models
                 if (_client.Retrieve(x => x.RecvMessage()) != null) break;
             }
 
-            _running.SetValue(true);
-            RecvCallback(null);
+            _token = new LockedValue<bool>(true);
+            _client.Act(x => x.StartReceiver(_token, RecvCallback));
         }
 
-        public void Stop() => _running.SetValue(false);
+        public void Stop()
+        {
+            _configuration.UserId = -1;
+            _client.SetValue(null);
+            _token?.SetValue(false);
+        }
 
         private void RecvCallback(UdpMessage msg)
         {
-            if (msg != null && msg.colorLine.Valid)
+            if (msg == null)
+            {
+                Stop();
+                Disconnected?.Invoke();
+            }
+            else
             {
                 ReceivedLine.SetValue(msg.colorLine);
-                LineReceived?.Invoke(this, new PropertyChangedEventArgs("ReceivedLine"));
+                LineReceived?.Invoke();
             }
-
-            if (_running.Retrieve(x => x))
-                _client.Act(x => x.BeginRecv(RecvCallback));
         }
     }
 }

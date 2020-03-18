@@ -1,10 +1,7 @@
-﻿using System;
+﻿using KPInt_Shared.Communication;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
-using KPInt_Shared.Communication;
 using System.Net;
 
 namespace KPInt.Models
@@ -74,6 +71,9 @@ namespace KPInt.Models
             return recv.GetReader().ReadInt32();
         }
 
+        public void Disconnect() =>
+            _client.Close();
+
         private Message RecvSpecific(MessageCode code, int timeout = 5)
         {
             var startTime = DateTime.Now;
@@ -89,6 +89,7 @@ namespace KPInt.Models
                         return null;
                     }
                     Protocol.Yield();
+                    continue;
                 }
                 if (msg.Code == code) return msg;
                 else startTime = DateTime.Now;
