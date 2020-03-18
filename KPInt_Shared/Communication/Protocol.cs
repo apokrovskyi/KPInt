@@ -4,7 +4,7 @@ namespace KPInt_Shared.Communication
 {
     public static class Protocol
     {
-        public const string VERSION = "20200307";
+        public const string VERSION = "20200318";
 
         public const int TCP_PORT = 60060;
 

@@ -39,10 +39,15 @@ namespace KPInt.Controls.DrawingTools
             _window = new ToolsWindow(pencil, line, picker) { Owner = parent };
             _window.Closing += ToolWindow_Closing;
             _window.Show();
+            OpenToolWindow();
         }
 
-        public void OpenToolWindow() =>
+        public void OpenToolWindow()
+        {
+            _window.Top = _window.Owner.Top;
+            _window.Left = _window.Owner.Left;
             _window.Visibility = Visibility.Visible;
+        }
 
         private void ToolWindow_Closing(object sender, CancelEventArgs e)
         {

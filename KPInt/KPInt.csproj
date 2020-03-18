@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Line.png" />
+    <None Remove="Resources\Pencil.png" />
+    <None Remove="Resources\Picker.png" />
     <None Remove="Resources\Refresh.png" />
   </ItemGroup>
 
@@ -15,6 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\Line.png" />
+    <Resource Include="Resources\Pencil.png" />
+    <Resource Include="Resources\Picker.png" />
     <Resource Include="Resources\Refresh.png" />
   </ItemGroup>
 

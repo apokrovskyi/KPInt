@@ -41,6 +41,7 @@ namespace KPInt
                     if (saveFileDialog.ShowDialog() == true)
                         canvas.Picture.Save(saveFileDialog.FileName, ImageFormat.Png);
                 }
+                if(e.Key == Key.T) drawingTools.OpenToolWindow();
             };
 
             serverConnection.PropertyChanged += (s, e) =>

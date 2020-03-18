@@ -7,10 +7,16 @@
         mc:Ignorable="d"
         Title="Tools" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
     <StackPanel Orientation="Vertical" Margin="10 10 10 10">
-        <StackPanel Orientation="Horizontal">
-            <ToggleButton x:Name="PencilToolButton" Content="Pencil"/>
-            <ToggleButton x:Name="LineToolButton" Content="Line"/>
-            <ToggleButton x:Name="PickerToolButton" Content="Picker"/>
+        <StackPanel Height="20" Orientation="Horizontal" Margin="10 10 10 10">
+            <ToggleButton x:Name="PencilToolButton">
+                <Image Source="/Resources/Pencil.png"/>
+            </ToggleButton>
+            <ToggleButton x:Name="LineToolButton" Margin="10 0 10 0">
+                <Image Source="/Resources/Line.png"/>
+            </ToggleButton>
+            <ToggleButton x:Name="PickerToolButton">
+                <Image Source="/Resources/Picker.png"/>
+            </ToggleButton>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Grid x:Name="PrimaryColorRect" Width="50" Height="50" Margin="10 10 0 10"/>
