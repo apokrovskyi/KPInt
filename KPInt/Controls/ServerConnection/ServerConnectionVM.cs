@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Net;
 using System.Windows;
+using System.Windows.Input;
 
 
 namespace KPInt.Controls.ServerConnection
@@ -34,6 +35,7 @@ namespace KPInt.Controls.ServerConnection
 
             _control = new ServerConnectionView { DataContext = this };
             _control.ConnectButton.Click += ConnectButton_Click;
+            _control.AddressTextBox.KeyDown += AddressTextBox_KeyDown;
             _control.RefreshRoomsButton.Click += (s, e) => _tcpConnection.RefreshRooms(Rooms);
             _control.CreateNewRoom.Click += (s, e) => _tcpConnection.CreateRoom(_control.NewRoomName.Text, _control.NewRoomPassword.Text);
             _control.ConnectToRoomButton.Click += ConnectToRoomButton_Click;
@@ -43,6 +45,11 @@ namespace KPInt.Controls.ServerConnection
         {
             _control.StatusTextBox.Text = IsServerConnected ? "Connected" : "Disconnected";
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsServerConnected)));
+        }
+
+        private void AddressTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) ConnectButton_Click(sender, e);
         }
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)

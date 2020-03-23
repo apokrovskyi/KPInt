@@ -27,13 +27,12 @@ namespace KPInt.Controls.ValueSelector
             }
         }
 
-        public ValueSelectorVM(double minimum, double maximum, double initial, double tick, string text)
+        public ValueSelectorVM(double minimum, double maximum, double initial, double tick)
         {
             _control = new ValueSelectorView { DataContext = this };
             _control.ValueSlider.Minimum = minimum;
             _control.ValueSlider.Maximum = maximum;
             _control.ValueSlider.TickFrequency = tick;
-            _control.ValueLabel.Text = text;
             Value = initial;
 
             _control.ValueTextBox.TextChanged += ValueTextBox_TextChanged;

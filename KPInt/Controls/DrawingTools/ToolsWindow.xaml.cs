@@ -37,9 +37,9 @@ namespace KPInt.Controls.DrawingTools
         public ToolsWindow(IDrawingTool pencil, IDrawingTool line, IDrawingTool picker)
         {
             InitializeComponent();
-            _rValueSelector = new ValueSelectorVM(0, 255, 0, 1, "R");
-            _gValueSelector = new ValueSelectorVM(0, 255, 0, 1, "G");
-            _bValueSelector = new ValueSelectorVM(0, 255, 0, 1, "B");
+            _rValueSelector = new ValueSelectorVM(0, 255, 0, 1);
+            _gValueSelector = new ValueSelectorVM(0, 255, 0, 1);
+            _bValueSelector = new ValueSelectorVM(0, 255, 0, 1);
 
             _rValueSelector.PropertyChanged += Color_Updated;
             _gValueSelector.PropertyChanged += Color_Updated;
@@ -51,7 +51,7 @@ namespace KPInt.Controls.DrawingTools
 
             _primaryColor = new SolidColorBrush();
             PrimaryColorRect.Background = _primaryColor;
-            PrimaryColorRect.MouseDown += PrimaryColorRect_MouseDown;
+            PrimaryColorRect.MouseRightButtonDown += PrimaryColorRect_MouseDown;
 
             _secondaryColor = new SolidColorBrush(Colors.White);
             SecondaryColorRect.Background = _secondaryColor;

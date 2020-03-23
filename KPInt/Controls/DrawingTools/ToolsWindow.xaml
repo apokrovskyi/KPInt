@@ -3,28 +3,36 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:KPInt.Controls.DrawingTools"
         mc:Ignorable="d"
         Title="Tools" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
-    <StackPanel Orientation="Vertical" Margin="10 10 10 10">
-        <StackPanel Height="20" Orientation="Horizontal" Margin="10 10 10 10">
+    <StackPanel Orientation="Horizontal" Margin="5">
+        <StackPanel Width="20" Orientation="Vertical" VerticalAlignment="Center" Margin="5 0 5 0">
             <ToggleButton x:Name="PencilToolButton">
                 <Image Source="/Resources/Pencil.png"/>
             </ToggleButton>
-            <ToggleButton x:Name="LineToolButton" Margin="10 0 10 0">
+            <ToggleButton x:Name="LineToolButton" Margin="0 5 0 5">
                 <Image Source="/Resources/Line.png"/>
             </ToggleButton>
             <ToggleButton x:Name="PickerToolButton">
                 <Image Source="/Resources/Picker.png"/>
             </ToggleButton>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Grid x:Name="PrimaryColorRect" Width="50" Height="50" Margin="10 10 0 10"/>
-            <Grid x:Name="SecondaryColorRect" Width="10" Height="10" Margin="10 0 10 15" VerticalAlignment="Bottom"/>
-            <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                <ContentControl x:Name="RColorPlaceholder" VerticalAlignment="Center" IsTabStop="False"/>
-                <ContentControl x:Name="GColorPlaceholder" VerticalAlignment="Center" IsTabStop="False" Margin="0 5 0 5"/>
-                <ContentControl x:Name="BColorPlaceholder" VerticalAlignment="Center" IsTabStop="False"/>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+            <Border x:Name="PrimaryColorRect" Width="50" Height="50" BorderThickness="1" BorderBrush="Black"/>
+            <Border x:Name="SecondaryColorRect" Width="15" Height="15" BorderThickness="1" BorderBrush="Black" VerticalAlignment="Bottom" Margin="10 0 0 0"/>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Label Content="R"/>
+                <ContentControl x:Name="RColorPlaceholder" IsTabStop="False"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Label Content="G"/>
+                <ContentControl x:Name="GColorPlaceholder" IsTabStop="False"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Label Content="B"/>
+                <ContentControl x:Name="BColorPlaceholder" IsTabStop="False"/>
             </StackPanel>
         </StackPanel>
     </StackPanel>

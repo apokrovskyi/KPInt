@@ -24,7 +24,7 @@
             <TabItem Header="Connect to a room">
                 <StackPanel x:Name="ConnectToRoomControls" Orientation="Horizontal">
                     <ComboBox x:Name="RoomSelector" Width="100" ItemsSource="{Binding Rooms}"/>
-                    <Button x:Name="RefreshRoomsButton" Width="20" Margin="10 0 0 0">
+                    <Button x:Name="RefreshRoomsButton" Height="20" Margin="10 0 0 0">
                         <Image Source="/Resources/Refresh.png"/>
                     </Button>
                     <Button x:Name="ConnectToRoomButton" Content="Connect" Margin="10 0 0 0"/>

@@ -7,14 +7,15 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance local:ValueSelectorVM}">
     <StackPanel Orientation="Horizontal">
-        <TextBlock x:Name="ValueLabel" VerticalAlignment="Center" Margin="10 0 10 0" MinWidth="20"/>
         <Slider x:Name="ValueSlider"
                 Value="{Binding Path=Value, Mode=TwoWay}"
                 Width="60"
                 IsMoveToPointEnabled="True"
                 IsSnapToTickEnabled="True"
                 TickFrequency="1"
-                VerticalAlignment="Center"/>
+                VerticalAlignment="Center"
+                IsTabStop="False"
+                Margin="5 0 5 0"/>
         <TextBox 
             x:Name="ValueTextBox"
             Width="30"
